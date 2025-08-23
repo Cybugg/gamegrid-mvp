@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useRef, useState, useEffect } from "react";
 
 interface GameCardProps {
   name1: string;
@@ -7,6 +7,7 @@ interface GameCardProps {
   description: string;
   duration: string;
   stake: string;
+  sendSize: (value: number) => void;
 }
 
 const GameCard = function ({
@@ -16,9 +17,30 @@ const GameCard = function ({
   imgSrc,
   duration,
   stake,
+  sendSize,
 }: GameCardProps) {
+  const cardref = useRef(null);
+  const [cardWidth, setCardWidth] = useState(0);
+
+  useEffect(() => {
+    if (!cardref.current) return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      const width = entry.contentRect.width;
+      setCardWidth(width);
+      sendSize(cardWidth); // 🔥 send to grandparent whenever it changes
+    });
+
+    observer.observe(cardref.current);
+
+    return () => observer.disconnect();
+  }, [sendSize]);
+
   return (
-    <div className="flex flex-col flex-shrink-0 w-auto p-4 gap-[16px] bg-[#2E2E2E] text-[#D5CFC7] rounded-[4px] border [border-color:var(--wdw,rgba(248,138,1,0.5))]">
+    <div
+      className="flex flex-col flex-shrink-0 w-auto p-4 gap-[16px] bg-[#2E2E2E] text-[#D5CFC7] rounded-[4px] border [border-color:var(--wdw,rgba(248,138,1,0.5))]"
+      ref={cardref}
+    >
       <img src={imgSrc} alt="" />
       <div>
         <h2 className="capitalize mt-4 font-semibold text-[#fff] text-base">
