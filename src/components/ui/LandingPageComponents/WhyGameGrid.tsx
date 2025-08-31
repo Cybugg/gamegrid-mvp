@@ -1,3 +1,4 @@
+import LazyImage from "@/hooks/lazyLoad";
 import OverLayHead from "./OverLayHead";
 import ReasonsCard from "./ReasonsCard";
 

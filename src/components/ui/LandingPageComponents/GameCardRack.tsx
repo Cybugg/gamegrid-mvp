@@ -1,12 +1,24 @@
-import React from "react";
+import React, { useRef } from "react";
 import { ReactNode } from "react";
 import GameCard from "./GameCard";
 
 interface GameCardRackProps {
   onChildData: (value: number) => void;
+  forwardedRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
-const GameCardRack = function ({ onChildData }: GameCardRackProps) {
+function chunkArray(array, size) {
+  const result = [];
+  for (let i = 0; i < array.length; i += size) {
+    result.push(array.slice(i, i + size));
+  }
+  return result;
+}
+
+const GameCardRack = function ({
+  onChildData,
+  forwardedRef,
+}: GameCardRackProps) {
   const cardDetailsArr = [
     {
       name1: "league of",
@@ -52,7 +64,11 @@ const GameCardRack = function ({ onChildData }: GameCardRackProps) {
   ];
 
   return (
-    <div className="flex gap-8 mt-[70px] no-wrap ">
+    <div
+      ref={forwardedRef}
+      className="grid grid-flow-col auto-cols-[calc((100%-2rem*3)/4)] gap-8 w-[100%] overflow-x-auto  no-wrap snap-x snap-mandatory"
+      style={{ scrollbarWidth: "none" }}
+    >
       {expandedItems.map((each, index) => {
         return (
           <GameCard

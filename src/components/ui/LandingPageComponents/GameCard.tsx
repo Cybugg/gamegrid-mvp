@@ -1,3 +1,4 @@
+import LazyImage from "@/hooks/lazyLoad";
 import { ReactNode, useRef, useState, useEffect } from "react";
 
 interface GameCardProps {
@@ -38,10 +39,10 @@ const GameCard = function ({
 
   return (
     <div
-      className="flex flex-col flex-shrink-0 w-auto p-4 gap-[16px] bg-[#2E2E2E] text-[#D5CFC7] rounded-[4px] border [border-color:var(--wdw,rgba(248,138,1,0.5))]"
+      className="flex flex-col flex-shrink-0 snap-card scroll-snap-[start]  p-4 gap-[16px] bg-[#2E2E2E] text-[#D5CFC7] rounded-[4px] border [border-color:var(--wdw,rgba(248,138,1,0.5))]"
       ref={cardref}
     >
-      <img src={imgSrc} alt="" />
+      <LazyImage src={imgSrc} alt="" />
       <div>
         <h2 className="capitalize mt-4 font-semibold text-[#fff] text-base">
           {name1}{" "}
@@ -55,15 +56,15 @@ const GameCard = function ({
       </div>
       <div className="flex flex-row gap-[15px] justify-between items-center mt-4 text-[10px]/[12px] tracking-[0.008px] font-medium ">
         <div className="flex gap-3">
-          <img src="Icons/hugeicons_user-multiple-02.png" alt="" />
+          <LazyImage src="Icons/hugeicons_user-multiple-02.png" alt="" />
           <p>Multiplayer</p>
         </div>
         <div className="flex gap-3">
-          <img src="/Icons/hugeicons_alarm-clock.svg" alt="" />
+          <LazyImage src="/Icons/hugeicons_alarm-clock.svg" alt="" />
           <p>{duration}</p>
         </div>
         <div className="flex gap-3">
-          <img src="/Icons/hugeicons_stake.svg" alt="" />
+          <LazyImage src="/Icons/hugeicons_stake.svg" alt="" />
           <p>{stake}</p>
         </div>
       </div>

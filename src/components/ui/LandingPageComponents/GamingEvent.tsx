@@ -4,6 +4,7 @@ import GameCardRack from "./GameCardRack";
 import OverLayHead from "./OverLayHead";
 const GamingEvent = function () {
   const containerRef = useRef<HTMLDivElement>(null);
+  const secContainerRef = useRef<HTMLDivElement>(null);
   const ellipseRef = useRef(null);
   const sectionRef = useRef(null);
 
@@ -28,24 +29,43 @@ const GamingEvent = function () {
     const totalWidth = cardWidth * 20 + (32 + 3);
     setNoOfSlides(Math.ceil(totalWidth / sectionWidth));
 
-    console.log(
-      `${sectionWidth}am section width while ${cardWidth} is card width and total sef is ${totalWidth} and it has ${noOfSlides}`
-    );
-
     return () => observer.disconnect();
   }, [sectionWidth, cardWidth, noOfSlides]);
 
-  const moveto = (idx) => {
-    setActiveIndex(idx);
-    if (containerRef.current) {
-      console.log(containerRef.current.clientWidth);
-      console.log(containerRef.current.scrollWidth);
-      containerRef.current.scrollTo({
-        left: sectionWidth * idx,
-        behavior: "smooth",
-      });
-      console.log(containerRef.current.scrollLeft);
-    }
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const container = containerRef.current;
+
+    const onScroll = () => {
+      // how many full slides (pages) have we scrolled?
+      const pageIndex = Math.round(
+        container.scrollLeft / container.clientWidth
+      );
+      setActiveIndex(pageIndex);
+    };
+
+    container.addEventListener("scroll", onScroll);
+
+    return () => {
+      container.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  const moveTo = (idx) => {
+    const bounded = Math.max(0, Math.min(idx, noOfSlides - 1));
+    setActiveIndex(bounded);
+    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!containerRef.current) return;
+
+    const card = container.children[bounded * 4] as HTMLElement;
+    if (!card) return;
+    const cardVal = card.offsetLeft;
+
+    container.scrollTo({
+      left: cardVal,
+      behavior: "smooth",
+    });
   };
 
   return (
@@ -64,11 +84,14 @@ const GamingEvent = function () {
       </div>
 
       <div
-        className="pr-[100px] w-full max-w-[100%] overflow-x-auto snap-x snap-mandatory scroll"
+        className="mt-[70px]  w-[100%] max-w-[100%] overflow-x-auto snap-x snap-mandatory scroll"
         style={{ scrollbarWidth: "none" }}
-        ref={containerRef}
+        ref={secContainerRef}
       >
-        <GameCardRack onChildData={handleChildData} />
+        <GameCardRack
+          onChildData={handleChildData}
+          forwardedRef={containerRef}
+        />
       </div>
 
       <div className="flex justify-center space-x-2 mt-12">
@@ -77,13 +100,14 @@ const GamingEvent = function () {
             <button
               key={idx}
               data-key={idx}
-              onClick={() => moveto(idx)}
+              onClick={() => moveTo(idx)}
               className={`w-2 h-2 rounded-full transition-colors ${
                 activeIndex === idx ? "bg-orange-500" : "bg-gray-600"
               }`}
             />
           ))}
       </div>
+
       <h1
         className=" absolute -right-[5%] -bottom-[5%] -z-[10]  font-bold text-transparent opacity-30 font-[lexend]  text-[120px]/[132px] 
          [-webkit-text-stroke-width:0.5px] 

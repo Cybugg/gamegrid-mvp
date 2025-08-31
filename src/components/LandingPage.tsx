@@ -1,9 +1,9 @@
 import Header from "./ui/LandingPageComponents/Header";
-import GamingEvent from "./ui/LandingPageComponents/GamingEvent";
 import WhyGameGrid from "./ui/LandingPageComponents/WhyGameGrid";
 import VideoGHT from "./ui/LandingPageComponents/VideoGHT";
 import JoinWaitlist from "./ui/LandingPageComponents/JoinWaitlist";
 import Footer from "./ui/LandingPageComponents/Footer";
+import LazyLoadSection from "@/hooks/lazyLoadSextion";
 
 const LandingPage = function () {
   return (
@@ -11,7 +11,10 @@ const LandingPage = function () {
       <div className="absolute inset-0 bg-[url('/Images/texture.png')] bg-repeat opacity-10"></div>
       <main>
         <Header />
-        <GamingEvent />
+        <LazyLoadSection
+          importFunc={() => import("./ui/LandingPageComponents/GamingEvent")}
+          placeholder="Game Event placeholder..."
+        />
         <WhyGameGrid />
         <VideoGHT />
         <JoinWaitlist />
